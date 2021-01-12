@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
+use App\Auth\AppAuthGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Auth::extend('app', function () {
+            return app(AppAuthGuard::class);
+        });
     }
 }
