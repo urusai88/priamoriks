@@ -31,17 +31,21 @@ class AuthTest extends TestCase
 
     public function testSignin()
     {
-        $apiToken1 = $this->signup('name 1');
+        $this->signup('name 1');
 
         $this->postJson('/api/signin')->assertStatus(422);
         $this->postJson('/api/signin', ['name' => 'name 2'])->assertStatus(422);
-        $apiToken2 = $this->postJson('/api/signin', ['name' => 'name 1'])
+        $apiToken = $this->postJson('/api/signin', ['name' => 'name 1'])
             ->assertSuccessful()
             ->assertJsonStructure(['api_token'])
             ->json('api_token');
 
+        $this->getJson('/api/user')->assertStatus(401);
         $this->getJson('/api/user', [
-            'authorization' => "Bearer $apiToken2",
+            'authorization' => "Bearer unknown",
+        ])->assertStatus(401);
+        $this->getJson('/api/user', [
+            'authorization' => "Bearer $apiToken",
         ])->assertSuccessful()->assertJson(['name' => 'name 1']);
     }
 }
