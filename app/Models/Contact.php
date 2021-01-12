@@ -15,6 +15,7 @@ class Contact extends Model
     use HasFactory;
 
     public $timestamps = false;
+    protected $casts = ['owner_id' => 'int', 'contact_user_id' => 'int'];
 
     public function owner()
     {

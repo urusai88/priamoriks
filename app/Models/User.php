@@ -46,6 +46,11 @@ class User extends Authenticatable
 
     public function contact()
     {
-        return $this->hasOneThrough(User::class, Contact::class, 'contact_user_id', 'id', 'owner_id', 'id');
+        return $this->hasOneThrough(User::class, Contact::class, 'owner_id', 'id', 'id', 'contact_user_id');
+    }
+
+    public function contacts_reversed()
+    {
+        return $this->hasOneThrough(User::class, Contact::class, 'contact_user_id', 'id', 'id', 'owner_id');
     }
 }
