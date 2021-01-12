@@ -24,7 +24,8 @@ class ContactsTest extends TestCase
     {
         $apiToken = $this->userSignup('name 666');
         $this->getJson('/api/contacts')->assertStatus(401);
-        $resp = $this->getJson('/api/contacts', ['authorization' => "Bearer $apiToken"])
+        $resp = $this
+            ->getJson('/api/contacts', ['authorization' => "Bearer $apiToken"])
             ->assertSuccessful();
 
         $json = $resp->json();
@@ -39,7 +40,7 @@ class ContactsTest extends TestCase
         $this->assertTrue(is_array($items));
     }
 
-    public function testContactMake()
+    public function testContactToggle()
     {
         $apiToken = $this->userSignup('name 666');
         $me = $this->getJson('/api/user', ['authorization' => "Bearer $apiToken"])->json('id');
@@ -50,14 +51,14 @@ class ContactsTest extends TestCase
         $this->assertArrayHasKey('contact', $user1);
         $this->assertTrue(is_null($user1['contact']));
 
-        $this->assertDatabaseMissing('contacts', ['owner_id' => $me, 'contact_user_id' => $user1['id']]);
+        $this->assertDatabaseMissing('contacts', ['owner_id' => $me, 'contact_user_id' => $user1['user']['id']]);
 
         $this->postJson('/api/contacts/make', [], ['authorization' => "Bearer $apiToken"])->assertStatus(422);
         $this->postJson('/api/contacts/make', ['user_id' => 0], ['authorization' => "Bearer $apiToken"])->assertStatus(422);
-        $this->postJson('/api/contacts/make', ['user_id' => $user1['id']], ['authorization' => "Bearer $apiToken"])
+        $this->postJson('/api/contacts/make', ['user_id' => $user1['user']['id']], ['authorization' => "Bearer $apiToken"])
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('contacts', ['owner_id' => $me, 'contact_user_id' => $user1['id']]);
+        $this->assertDatabaseHas('contacts', ['owner_id' => $me, 'contact_user_id' => $user1['user']['id']]);
 
         $resp = $this->getJson('/api/contacts', ['authorization' => "Bearer $apiToken"]);
 
@@ -66,5 +67,10 @@ class ContactsTest extends TestCase
 
         $this->assertArrayHasKey('contact', $user1);
         $this->assertTrue(!is_null($user1['contact']));
+
+        // remove
+        $this->postJson('/api/contacts/remove', ['user_id' => $user1['user']['id']], ['authorization' => "Bearer $apiToken"])
+            ->assertSuccessful();
+        $this->assertDatabaseMissing('contacts', ['owner_id' => $me, 'contact_user_id' => $user1['user']['id']]);
     }
 }

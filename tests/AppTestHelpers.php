@@ -13,6 +13,6 @@ trait AppTestHelpers
      */
     public function userSignup($name)
     {
-        return $this->postJson('/api/signup', ['name' => $name])->json('api_token');
+        return $this->postJson('/api/signin', ['name' => $name])->json('api_token');
     }
 }
