@@ -65,32 +65,39 @@ class _MainScreenState extends State<MainScreen> {
           return Center(child: CircularProgressIndicator());
         }
 
-        return ListView.separated(
-          itemCount: model.count.value,
-          separatorBuilder: (_, __) => Divider(),
-          itemBuilder: (_, index) {
-            if (index == items.length) {
-              model.loadNextContacts();
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 500),
+            child: ListView.separated(
+              itemCount: model.count.value,
+              separatorBuilder: (_, __) => Divider(),
+              itemBuilder: (_, index) {
+                if (index == items.length) {
+                  model.loadNextContacts();
 
-              return Center(child: CircularProgressIndicator());
-            }
+                  return Center(child: CircularProgressIndicator());
+                }
 
-            if (index > items.length) {
-              return null;
-            }
+                if (index > items.length) {
+                  return null;
+                }
 
-            final item = items[index];
+                final item = items[index];
 
-            return ListTile(
-              title: Text(item.user.name),
-              trailing: IconButton(
-                onPressed: () => model.toggleFavorite(item.user.id),
-                icon: Icon(
-                  item.contact == null ? Icons.favorite_border : Icons.favorite,
-                ),
-              ),
-            );
-          },
+                return ListTile(
+                  title: Text(item.user.name),
+                  trailing: IconButton(
+                    onPressed: () => model.toggleFavorite(item.user.id),
+                    icon: Icon(
+                      item.contact == null
+                          ? Icons.favorite_border
+                          : Icons.favorite,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
     );
@@ -112,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
           valueListenable: model.mode,
           builder: (_, mode, __) {
             final iconData = mode == 1 ? Icons.favorite_border : Icons.favorite;
-            final text = mode == 1 ? 'Только избранные' : 'Все';
+            final text = mode == 1 ? 'Все' : 'Только избранные';
 
             return TextButton.icon(
               style: ButtonStyle(
