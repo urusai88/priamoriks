@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/signin', [AuthController::class, 'signin']);
+
+Route::group(['prefix' => 'contacts', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [ContactsController::class, 'contactsList']);
+    Route::post('/make', [ContactsController::class, 'contactsMake']);
+    Route::post('/remove', [ContactsController::class, 'contactsRemove']);
+});
