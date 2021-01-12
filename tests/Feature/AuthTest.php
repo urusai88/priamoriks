@@ -18,7 +18,6 @@ class AuthTest extends TestCase
 
     public function testSignup()
     {
-
         $this->postJson('/api/signup')->assertStatus(422);
         $this->postJson('/api/signup', ['name' => ''])->assertStatus(422);
         $this->postJson('/api/signup', ['name' => 'name 1'])->assertJsonStructure(['api_token']);
