@@ -12,18 +12,27 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
+class UserManager {
+  UserEntity userEntity;
+}
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  UserManager userManager;
+
   Dio dio;
   AuthService authService;
+  ContactsService contactService;
 
   @override
   void initState() {
     super.initState();
+
+    userManager = UserManager();
 
     dio = Dio(BaseOptions(baseUrl: 'http://192.168.1.101:8000/api'));
     dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
@@ -33,19 +42,24 @@ class _MyAppState extends State<MyApp> {
       },
     ));
 
-    authService = AuthService(dio);
+    authService = AuthService(dio, baseUrl: 'http://192.168.1.101:8000/api');
+    contactService =
+        ContactsService(dio, baseUrl: 'http://192.168.1.101:8000/api/contacts');
   }
 
   @override
   Widget build(BuildContext context) {
     final app = MaterialApp(
       title: 'Priamoriks Demo',
-      home: SignupScreen(),
+      home: LoadingScreen(),
     );
 
     final provider = MultiProvider(
       providers: [
+        Provider<Dio>.value(value: dio),
         Provider<AuthService>.value(value: authService),
+        Provider<ContactsService>.value(value: contactService),
+        Provider<UserManager>.value(value: userManager),
       ],
       child: app,
     );

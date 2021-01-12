@@ -27,13 +27,13 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     try {
-      final resp = await authService.signup(name: name);
+      final resp = await authService.signin(name: name);
 
       await Hive.box('box').put('api_token', resp.apiToken);
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => LoadingScreen()),
         (route) => false,
       );
     } on DioError catch (e) {
@@ -55,6 +55,14 @@ class _SignupScreenState extends State<SignupScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              'Регистрация / Авторизация',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: 300,

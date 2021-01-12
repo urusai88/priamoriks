@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:face/import.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';
@@ -24,8 +25,11 @@ class SignupResponse {
 
 @RestApi()
 abstract class AuthService {
-  factory AuthService (Dio dio, {String baseUrl}) = _AuthService;
+  factory AuthService(Dio dio, {String baseUrl}) = _AuthService;
 
-  @POST('/signup')
-  Future<SignupResponse> signup({@required @Field() String name});
+  @POST('/signin')
+  Future<SignupResponse> signin({@required @Field() String name});
+
+  @GET('/user')
+  Future<UserEntity> user();
 }

@@ -31,14 +31,14 @@ class _AuthService implements AuthService {
   String baseUrl;
 
   @override
-  Future<SignupResponse> signup({name}) async {
+  Future<SignupResponse> signin({name}) async {
     ArgumentError.checkNotNull(name, 'name');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = {'name': name};
     _data.removeWhere((k, v) => v == null);
-    final _result = await _dio.request<Map<String, dynamic>>('/signup',
+    final _result = await _dio.request<Map<String, dynamic>>('/signin',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -47,6 +47,23 @@ class _AuthService implements AuthService {
             baseUrl: baseUrl),
         data: _data);
     final value = SignupResponse.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<UserEntity> user() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>('/user',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = UserEntity.fromJson(_result.data);
     return value;
   }
 }
